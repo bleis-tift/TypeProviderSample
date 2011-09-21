@@ -8,10 +8,11 @@ type t<'a> =
 | CompileError of CompilerError seq
 | Result of 'a
 
-let compile moduleName src =
+let compile loadings moduleName src =
   use provider = new FSharpCodeProvider()
   let dll = System.IO.Path.GetTempFileName() + ".dll"
-  let src = "module " + moduleName + "\nopen System\n" + src
+  let openMods = loadings |> List.map (sprintf "open %s\n") |> String.concat ""
+  let src = "module " + moduleName + "\n" + openMods + src
   let param = CompilerParameters(OutputAssembly=dll, CompilerOptions="--target:library")//(GenerateInMemory=true)
   let res = provider.CompileAssemblyFromSource(param, [| src |])
   let errors = res.Errors |> Seq.cast<CompilerError>

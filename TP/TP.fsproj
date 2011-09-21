@@ -48,7 +48,7 @@
   <ItemGroup>
     <Compile Include="CompiledType.fs" />
     <Compile Include="TypeSafeSplit.fs" />
-    <None Include="Script.fsx" />
+    <Compile Include="TypeSafeRegex.fs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets" Condition=" Exists('$(MSBuildExtensionsPath32)\..\Microsoft SDKs\F#\3.0\Framework\v4.0\Microsoft.FSharp.Targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

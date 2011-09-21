@@ -41,7 +41,7 @@ type SplitterProvider() =
                 "    | [| " + pat + " |] -> (" + tpl + ")\n" +
                 "    | _ -> failwith \"not match.\"\n" +
                 "  splitImpl"
-        match CompiledType.compile name f with
+        match CompiledType.compile ["System"] name f with
         | CompiledType.Result t -> t
         | CompiledType.CompileError e -> failwith "oops!"
       let r = makeSplit typeNameWithArgs (staticArgs.[0] :?> int)
