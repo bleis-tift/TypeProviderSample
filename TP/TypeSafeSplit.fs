@@ -1,48 +1,29 @@
 ﻿namespace StringUtil
 
-open System
-open System.Reflection
-open System.Linq.Expressions
 open Microsoft.FSharp.Core.CompilerServices
+open TPUtil
+open TPUtil.SimpleTypeProvider
+open TPUtil.StaticArgument
 
-[<assembly: TypeProviderAssembly>]
-do()
-
-type TSSplit = class end
-
+type TSSplit() =
+  static member GenSrc args =
+    let count = (args |> List.find (fun a -> a.Name = "count")).Value :?> int
+    let vars = List.init count (fun i -> "s" + (string i))
+    let pat = vars |> String.concat "; "
+    let tpl = vars |> String.concat ", "
+    "let split =\n  \
+       let split' (sep: string) (str: string) =\n    \
+         match str.Split([| sep |], " + (string count) + ", StringSplitOptions.None) with\n    \
+         | [| " + pat + " |] -> (" + tpl + ")\n    \
+         | _ -> failwith \"not match.\"\n  \
+       split'"
+    
 [<TypeProvider>]
 type SplitterProvider() =
-  let invalidation = Event<EventHandler, EventArgs>()
-  interface IProvidedNamespace with
-    member this.ResolveTypeName(typeName) = typeof<TSSplit>
-    member this.NamespaceName with get() = "StringUtil"
-    member this.GetNestedNamespaces() = Array.empty
-    member this.GetTypes() = [| typeof<TSSplit> |]
-  interface ITypeProvider with
-    member this.GetNamespaces() = [| this |]
-    member this.Dispose() = ()
-    [<CLIEvent>]
-    member this.Invalidate = invalidation.Publish
-    member this.GetStaticParameters(typeWithoutArguments) =
-      [| { new ParameterInfo() with
-             member x.Name = "count"
-             member x.ParameterType = typeof<int> } |]
-    member this.ApplyStaticArguments(typeWithoutArgs, typeNameWithArgs, staticArgs) =
-      let makeSplit name count =
-        let pat = List.init count (fun i -> "s" + (string i)) |> String.concat "; "
-        let tpl = List.init count (fun i -> "s" + (string i)) |> String.concat ", "
-        let src = "let split =\n" +
-                  "  let splitImpl (sep: string) (str: string) =\n" +
-                  "    match str.Split([| sep |], " + (string count) + ", StringSplitOptions.None) with\n" +
-                  "    | [| " + pat + " |] -> (" + tpl + ")\n" +
-                  "    | _ -> failwith \"not match.\"\n" +
-                  "  splitImpl"
-        match CompiledType.compile ["System"] name src with
-        | CompiledType.Result t -> t
-        | CompiledType.CompileError e -> failwith (e |> Seq.head |> string)
-      let r = makeSplit typeNameWithArgs (staticArgs.[0] :?> int)
-      r
-    member this.GetInvokerExpression(syntheticMethodBase, parameters) =
-      let m = syntheticMethodBase :?> MethodInfo
-      let args = parameters |> Seq.cast<Expression>
-      Expression.Call(null, m, args) :> Expression
+  inherit SimpleTypeProviderBase begin
+    { NameSpace = "StringUtil"
+      ProvideType = typeof<TSSplit>
+      StaticParams = [ StaticParameter.make "count" typeof<int> ]
+      OpenModules = [ "System" ]
+      GenSrc = TSSplit.GenSrc }
+  end

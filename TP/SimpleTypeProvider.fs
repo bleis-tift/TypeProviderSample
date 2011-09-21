@@ -1,4 +1,4 @@
-﻿namespace TP
+﻿namespace TPUtil
 
 open System
 open System.Reflection
@@ -37,8 +37,8 @@ module SimpleTypeProvider =
     NameSpace: string
     ProvideType: Type
     StaticParams: StaticParameter.t list
-    GenSrc: StaticArgument.t list -> string
     OpenModules: string list
+    GenSrc: StaticArgument.t list -> string
   }
 
   type SimpleTypeProviderBase(info: Info) =
