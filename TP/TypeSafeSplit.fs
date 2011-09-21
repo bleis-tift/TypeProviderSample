@@ -1,13 +1,9 @@
 ﻿namespace StringUtil
 
 open System
-open System.Collections.Generic
-open System.Linq.Expressions
-open System.Globalization
 open System.Reflection
-open System.Diagnostics
+open System.Linq.Expressions
 open Microsoft.FSharp.Core.CompilerServices
-open System.Text.RegularExpressions
 
 [<assembly: TypeProviderAssembly>]
 do()

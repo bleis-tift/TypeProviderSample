@@ -1,8 +1,9 @@
 ﻿module CompiledType
 
-open Microsoft.FSharp.Compiler.CodeDom
+open System.IO
 open System.Reflection
 open System.CodeDom.Compiler
+open Microsoft.FSharp.Compiler.CodeDom
 
 type t<'a> =
 | CompileError of CompilerError seq
@@ -10,7 +11,7 @@ type t<'a> =
 
 let compile loadings moduleName src =
   use provider = new FSharpCodeProvider()
-  let dll = System.IO.Path.GetTempFileName() + ".dll"
+  let dll = Path.GetTempFileName() + ".dll"
   let openMods = loadings |> List.map (sprintf "open %s\n") |> String.concat ""
   let src = "module " + moduleName + "\n" + openMods + src
   let param = CompilerParameters([| "System.dll" |], OutputAssembly=dll, CompilerOptions="--target:library")

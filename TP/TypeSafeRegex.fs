@@ -1,13 +1,10 @@
 ﻿module TypeSafeRegex
 
 open System
-open System.Collections.Generic
-open System.Linq.Expressions
-open System.Globalization
-open System.Reflection
-open System.Diagnostics
-open Microsoft.FSharp.Core.CompilerServices
 open System.Text.RegularExpressions
+open System.Reflection
+open System.Linq.Expressions
+open Microsoft.FSharp.Core.CompilerServices
 
 [<assembly: TypeProviderAssembly>]
 do()
