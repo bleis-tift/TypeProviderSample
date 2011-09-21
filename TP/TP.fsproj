@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompiledType.fs" />
+    <Compile Include="SimpleTypeProvider.fs" />
     <Compile Include="TypeSafeSplit.fs" />
     <Compile Include="TypeSafeRegex.fs" />
   </ItemGroup>
