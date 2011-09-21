@@ -8,16 +8,16 @@ open Microsoft.FSharp.Core.CompilerServices
 [<assembly: TypeProviderAssembly>]
 do()
 
-type Splitter = class end
+type TSSplit = class end
 
 [<TypeProvider>]
 type SplitterProvider() =
   let invalidation = Event<EventHandler, EventArgs>()
   interface IProvidedNamespace with
-    member this.ResolveTypeName(typeName) = typeof<Splitter>
+    member this.ResolveTypeName(typeName) = typeof<TSSplit>
     member this.NamespaceName with get() = "StringUtil"
     member this.GetNestedNamespaces() = Array.empty
-    member this.GetTypes() = [| typeof<Splitter> |]
+    member this.GetTypes() = [| typeof<TSSplit> |]
   interface ITypeProvider with
     member this.GetNamespaces() = [| this |]
     member this.Dispose() = ()
@@ -31,15 +31,15 @@ type SplitterProvider() =
       let makeSplit name count =
         let pat = List.init count (fun i -> "s" + (string i)) |> String.concat "; "
         let tpl = List.init count (fun i -> "s" + (string i)) |> String.concat ", "
-        let f = "let split =\n" +
-                "  let splitImpl (sep: string) (str: string) =\n" +
-                "    match str.Split([| sep |], " + (string count) + ", StringSplitOptions.None) with\n" +
-                "    | [| " + pat + " |] -> (" + tpl + ")\n" +
-                "    | _ -> failwith \"not match.\"\n" +
-                "  splitImpl"
-        match CompiledType.compile ["System"] name f with
+        let src = "let split =\n" +
+                  "  let splitImpl (sep: string) (str: string) =\n" +
+                  "    match str.Split([| sep |], " + (string count) + ", StringSplitOptions.None) with\n" +
+                  "    | [| " + pat + " |] -> (" + tpl + ")\n" +
+                  "    | _ -> failwith \"not match.\"\n" +
+                  "  splitImpl"
+        match CompiledType.compile ["System"] name src with
         | CompiledType.Result t -> t
-        | CompiledType.CompileError e -> failwith "oops!"
+        | CompiledType.CompileError e -> failwith (e |> Seq.head |> string)
       let r = makeSplit typeNameWithArgs (staticArgs.[0] :?> int)
       r
     member this.GetInvokerExpression(syntheticMethodBase, parameters) =
