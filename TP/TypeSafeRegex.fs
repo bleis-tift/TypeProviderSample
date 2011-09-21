@@ -15,7 +15,7 @@ do()
 type TSRegex = class end
 
 [<TypeProvider>]
-type SplitterProvider() =
+type TypeSafeRegexProvider() =
   let invalidation = Event<EventHandler, EventArgs>()
   interface IProvidedNamespace with
     member this.ResolveTypeName(typeName) = typeof<TSRegex>
