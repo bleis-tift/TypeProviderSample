@@ -11,10 +11,12 @@ type t<'a> =
 
 let compile loadings moduleName src =
   use provider = new FSharpCodeProvider()
-  let dll = Path.GetTempFileName() + ".dll"
-  let openMods = loadings |> List.map (sprintf "open %s\n") |> String.concat ""
-  let src = "module " + moduleName + "\n" + openMods + src
-  let param = CompilerParameters([| "System.dll" |], OutputAssembly=dll, CompilerOptions="--target:library")
+  let src =
+    let openMods = loadings |> List.map (sprintf "open %s\n") |> String.concat ""
+    "module " + moduleName + "\n" + openMods + src
+  let param =
+    let dll = Path.GetTempFileName() + ".dll"
+    CompilerParameters([| "System.dll" |], OutputAssembly=dll, CompilerOptions="--target:library")
   let res = provider.CompileAssemblyFromSource(param, [| src |])
   let errors = res.Errors |> Seq.cast<CompilerError>
   if not(Seq.isEmpty errors) then
