@@ -52,7 +52,7 @@ type SplitterProvider() =
                   "  matchImpl"
         match CompiledType.compile ["System"; "System.Text.RegularExpressions"] name src with
         | CompiledType.Result t -> t
-        | CompiledType.CompileError e -> failwith "oops!"
+        | CompiledType.CompileError e -> failwith (e |> Seq.head |> string)
       let r = makeRegex typeNameWithArgs (staticArgs.[0] :?> string)
       r
     member this.GetInvokerExpression(syntheticMethodBase, parameters) =
