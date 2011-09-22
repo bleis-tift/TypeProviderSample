@@ -6,8 +6,17 @@ open TPUtil
 open TPUtil.SimpleTypeProvider
 open TPUtil.StaticArgument
 
-type TSRegex() =
-  static member GenSrc args =
+type TSRegex = class end
+    
+[<TypeProvider>]
+type TypeSafeRegexProvider() =
+  inherit SimpleTypeProviderBase<TSRegex> begin
+    NameSpace = "RegexUtil",
+    StaticParams = [ StaticParameter.make "pattern" typeof<string> ],
+    OpenModules = [ "System"; "System.Text.RegularExpressions" ]
+  end
+
+  override this.GenSrc args =
     let pattern = (args |> List.find (fun a -> a.Name = "pattern")).Value :?> string
     let r = Regex(pattern)
     let groups = r.GetGroupNumbers()
@@ -26,13 +35,3 @@ type TSRegex() =
          else\n      \
            None\n  \
        matchImpl"
-    
-[<TypeProvider>]
-type TypeSafeRegexProvider() =
-  inherit SimpleTypeProviderBase begin
-    { NameSpace = "RegexUtil"
-      ProvideType = typeof<TSRegex>
-      StaticParams = [ StaticParameter.make "pattern" typeof<string> ]
-      OpenModules = [ "System"; "System.Text.RegularExpressions" ]
-      GenSrc = TSRegex.GenSrc }
-  end

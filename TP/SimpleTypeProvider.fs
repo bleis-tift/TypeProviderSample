@@ -33,21 +33,17 @@ open StaticParameter
 open StaticArgument
 
 module SimpleTypeProvider =
-  type Info = {
-    NameSpace: string
-    ProvideType: Type
-    StaticParams: StaticParameter.t list
-    OpenModules: string list
-    GenSrc: StaticArgument.t list -> string
-  }
-
-  type SimpleTypeProviderBase(info: Info) =
+  [<AbstractClass>]
+  type SimpleTypeProviderBase<'ProvideType>(NameSpace) =
     let invalidation = Event<EventHandler, EventArgs>()
+    member val StaticParams: StaticParameter.t list = [] with get, set
+    member val OpenModules = [ "System" ] with get, set
+    abstract GenSrc: StaticArgument.t list -> string
     interface IProvidedNamespace with
-      member this.ResolveTypeName(typeName) = info.ProvideType
-      member this.NamespaceName with get() = info.NameSpace
+      member this.ResolveTypeName(typeName) = typeof<'ProvideType>
+      member this.NamespaceName with get() = NameSpace
       member this.GetNestedNamespaces() = Array.empty
-      member this.GetTypes() = [| info.ProvideType |]
+      member this.GetTypes() = [| typeof<'ProvideType> |]
     interface ITypeProvider with
       member this.GetNamespaces() = [| this |]
       member this.Dispose() = ()
@@ -60,12 +56,12 @@ module SimpleTypeProvider =
               member x.Name = n
               member x.ParameterType = pt
               member x.Position = pos }
-        info.StaticParams |> List.mapi recToClass |> List.toArray
+        this.StaticParams |> List.mapi recToClass |> List.toArray
 
       member this.ApplyStaticArguments(typeWithoutArgs, typeNameWithArgs, staticArgs) =
         let staticArgs = staticArgs |> Array.toList
-        let src = info.GenSrc (staticArgs |> StaticArgument.from info.StaticParams)
-        match CompiledType.compile info.OpenModules typeNameWithArgs src with
+        let src = this.GenSrc (staticArgs |> StaticArgument.from this.StaticParams)
+        match CompiledType.compile this.OpenModules typeNameWithArgs src with
         | Result t -> t
         | CompileError e -> failwith (e |> Seq.head |> string)
 
