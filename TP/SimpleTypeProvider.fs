@@ -14,7 +14,7 @@ module StaticParameter =
     Name: string
     ParameterType: Type
   }
-  let make name paramType = { Name = name; ParameterType = paramType }
+  let make<'ParamType> name = { Name = name; ParameterType = typeof<'ParamType> }
 
 module StaticArgument =
   type t = {

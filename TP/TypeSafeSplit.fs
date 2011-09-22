@@ -11,7 +11,7 @@ type TSSplit = class end
 type SplitterProvider() =
   inherit SimpleTypeProviderBase<TSSplit> begin
     NameSpace = "StringUtil",
-    StaticParams = [ StaticParameter.make "count" typeof<int> ]
+    StaticParams = [ StaticParameter.make<int> "count" ]
   end
 
   override this.GenSrc args =

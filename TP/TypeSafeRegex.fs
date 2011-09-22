@@ -12,7 +12,7 @@ type TSRegex = class end
 type TypeSafeRegexProvider() =
   inherit SimpleTypeProviderBase<TSRegex> begin
     NameSpace = "RegexUtil",
-    StaticParams = [ StaticParameter.make "pattern" typeof<string> ],
+    StaticParams = [ StaticParameter.make<string> "pattern" ],
     OpenModules = [ "System"; "System.Text.RegularExpressions" ]
   end
 
