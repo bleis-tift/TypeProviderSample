@@ -20,3 +20,11 @@ let sample2 () =
   match "123-45678-910a" |> PhoneNumberPat.match' with
   | Some _ -> failwith "oops!"
   | None -> printfn "not match."
+
+// 名前付きグループ
+[<Generate>]
+type UrlPat = TSRegex< @"(?<Scheme>[^:]+)://(?<Host>[^/]+)(?<Path>/.+)" >
+
+let sample3 () =
+  let result = "http://example.jp/hoge/piyo/foo/bar" |> UrlPat.nameMatch
+  printfn "%A" result

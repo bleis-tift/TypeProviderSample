@@ -67,5 +67,10 @@ module SimpleTypeProvider =
 
       member this.GetInvokerExpression(syntheticMethodBase, parameters) =
         let m = syntheticMethodBase :?> MethodInfo
-        let args = parameters |> Seq.cast<Expression>
-        Expression.Call(null, m, args) :> Expression
+        if m.IsStatic then
+          let args = parameters |> Seq.cast<Expression>
+          Expression.Call(null, m, args) :> Expression
+        else
+          match parameters |> Seq.cast<Expression> |> Seq.toList with
+          | self::args -> Expression.Call(self, m, args) :> Expression
+          | _ -> failwith "oops!"

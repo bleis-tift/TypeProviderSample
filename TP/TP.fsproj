@@ -21,11 +21,9 @@
     <WarningLevel>3</WarningLevel>
     <DocumentationFile>bin\Debug\TP.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
-    <StartAction>Project</StartAction>
-    <StartProgram>
-    </StartProgram>
-    <StartArguments>
-    </StartArguments>
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\devenv.exe</StartProgram>
+    <StartArguments>"C:\Users\bleis-tift\Documents\Visual Studio 11\Projects\TPClient\TPClient.sln"</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>

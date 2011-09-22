@@ -5,4 +5,5 @@ let main _ =
 
   TypeSafeRegexSample.sample1 () // 13902
   TypeSafeRegexSample.sample2 () // not match.
+  TypeSafeRegexSample.sample3 ()
   0
